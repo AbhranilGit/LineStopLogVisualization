@@ -1,3 +1,20 @@
 conda create --name DunbartonProjectEnv python=3.9 
 conda activate DunbartonProjectEnv
 pip install -r requirements.txt
+cd /home/abhranil/Projects/Python/LineStopLogVisualization/app
+streamlit run Home.py
+cd ../
+git add .
+git commit -m "New Changes"
+git push origin master
+
+ssh dpmsa@172.21.10.224 -p 6482 
+password: t$t!ngSyS
+cd LineStopLogVisualization
+git init .
+git remote add origin https://github.com/AbhranilGit/LineStopLogVisualization.git
+git pull origin master
+docker build -t linestoplogvis:latest .
+docker run -itd --network DunbartonNetwork -p 8501:8501 --name=LineStopVisApp linestoplogvis:latest
+docker logs LineStopVisApp -f
+http://172.21.10.224:8501/
