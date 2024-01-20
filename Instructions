@@ -1,0 +1,3 @@
+conda create --name DunbartonProjectEnv python=3.9 
+conda activate DunbartonProjectEnv
+pip install -r requirements.txt
