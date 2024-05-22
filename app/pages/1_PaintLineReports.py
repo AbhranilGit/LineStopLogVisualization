@@ -67,13 +67,13 @@ def display_current_status():
 
 @st.cache_data(ttl=1*24*60*60) # 1 day
 def get_downtime_by_parameter(parameter,today_date):
-    print(f"Getting records till {today_date}")
-    print()
+    # print(f"Getting records till {today_date}")
+    # print()
     curr_qry = f"""with s1 as
                    (
                      select date(stop_date) as stop_date, coalesce({parameter},'NA') as {parameter}, start_date - stop_date as duration 
                      from LineStopSchema.production_line_table plt 
-                     where start_date is not null and stop_date::date > (current_date - interval '6 months')::date
+                     where start_date is not null and stop_date::date > (current_date - interval '6 months')::date and {parameter} <> 'NA'
                    )
                    select stop_date,{parameter},SUM(duration) as Duration
                    from s1
@@ -197,6 +197,29 @@ chart = alt.Chart(CatID_DF).mark_bar().encode(
             y=alt.Y(cat_id,title="Down Time (Mins)"))
 st.altair_chart(chart, use_container_width=True)
 st.divider()
+
+
+add_cat_all_dates,add_cat_all_parameters,add_cat_db_res_dict = get_downtime_by_parameter("additional_category",curr_date)
+st.subheader(body = 'Paint Line Downtime By Additonal Category ID', anchor='#paint-line-reports')
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    add_cat_id = st.selectbox(label ="Additional Category:",options=add_cat_all_parameters,index=0)
+with col2:
+    add_cat_id_start_date = st.date_input(label="Start Date:", value=min(add_cat_all_dates), min_value=min(add_cat_all_dates), max_value=add_cat_all_dates[-2], key='add_cat_start_date')
+with col3:
+    add_cat_id_stop_date = st.date_input(label="Stop Date:", value = max(add_cat_all_dates), min_value=add_cat_all_dates[add_cat_all_dates.index(add_cat_id_start_date)+1], max_value=max(add_cat_all_dates), key='add_cat_stop_date')
+    
+AddCatID_DF = format_data(add_cat_all_dates,add_cat_all_parameters,add_cat_db_res_dict,add_cat_id_start_date,add_cat_id_stop_date)
+# print(AddCatID_DF)
+
+add_cat_chart = alt.Chart(AddCatID_DF).mark_bar().encode(
+                x=alt.X('Date:O', axis=alt.Axis(labelOverlap="greedy",grid=False,labelAngle=-45,)),
+                y=alt.Y(add_cat_id,title="Down Time (Mins)"))
+st.altair_chart(add_cat_chart, use_container_width=True)
+st.divider()
+
+
 
 all_dates,all_parameters,db_res_dict = get_downtime_by_parameter("cause",curr_date)
 st.subheader(body = 'Paint Line Downtime By Causes (Top 10)', anchor='#paint-line-reports')
