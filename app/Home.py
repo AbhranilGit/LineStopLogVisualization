@@ -277,8 +277,7 @@ def create_report():
         report_df = fetch_report_data()  
     st.toast('Data Downloaded Successfully!', icon='✅')
     st.snow()
-    with st.container(border=True):
-        st.dataframe(report_df,hide_index=True,width=1140)
+    st.dataframe(report_df,hide_index=True,use_container_width=True)
     
 
 create_report()
