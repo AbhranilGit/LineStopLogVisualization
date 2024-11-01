@@ -15,8 +15,6 @@ st.set_page_config(
         layout="wide",
         initial_sidebar_state="expanded")
 
-st.sidebar.success("Welcome to Dunbarton Reports.")
-
 def create_db_engine():
     db_url = 'plc-database.c3ggsmikm5db.us-east-2.rds.amazonaws.com'
     db_port = '5432'
