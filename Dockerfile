@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.8
 
 # By default, listen on port 8501
 EXPOSE 8501
